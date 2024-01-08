@@ -1,0 +1,11 @@
+<resources>
+    <string name="appName">NotesDemoApp</string>
+    <string name="back">Back</string>
+    <string name="saveNoteDb">Save to database</string>
+    <string name="saveNoteFiles">Save to files</string>
+    <string name="addNote">Add note</string>
+    <string name="addTitle">Add title …</string>
+    <string name="addNotes">Add notes</string>
+    <string name="cancel">Cancel</string>
+    <string name="shareable">Shareable?</string>
+</resources>
