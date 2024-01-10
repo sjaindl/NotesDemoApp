@@ -24,7 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sjaindl.notesdemoapp.model.Note
-import com.sjaindl.notesdemoapp.model.NoteType
+import com.sjaindl.notesdemoapp.model.ShareType
 import com.sjaindl.notesdemoapp.ui.theme.NotesDemoAppTheme
 
 @Composable
@@ -77,7 +77,7 @@ fun SingleNote(
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            if (note.saveToDatabase) {
+            if (note is Note.DatabaseNote) {
                 Text(
                     text = "Saved to database",
                     color = Color.Gray,
@@ -91,7 +91,7 @@ fun SingleNote(
                 )
             }
 
-            if (note.type == NoteType.Shareable) {
+            if (note.shareType == ShareType.Shareable) {
                 IconButton(
                     onClick = onShare,
                 ) {
@@ -119,10 +119,9 @@ fun SingleNote(
 fun SingleNotePreview() {
     NotesDemoAppTheme {
         SingleNote(
-            note = Note(
+            note = Note.DatabaseNote(
                 id = "1",
-                type = NoteType.Shareable,
-                saveToDatabase = true,
+                shareType = ShareType.Shareable,
                 title = "title",
                 text = "text",
             ),

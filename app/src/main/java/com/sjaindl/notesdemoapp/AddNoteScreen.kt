@@ -29,7 +29,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.sjaindl.notesdemoapp.model.Note
-import com.sjaindl.notesdemoapp.model.NoteType
+import com.sjaindl.notesdemoapp.model.ShareType
 import kotlin.random.Random
 
 @Composable
@@ -131,10 +131,9 @@ fun AddNoteScreen(
                     onClick = {
                         focusManager.clearFocus(force = true)
 
-                        val note = Note(
+                        val note = Note.DatabaseNote(
                             id = Random.nextInt(from = 0, until = Int.MAX_VALUE).toString(),
-                            type = if (shareable) NoteType.Shareable else NoteType.Unshareable,
-                            saveToDatabase = true,
+                            shareType = if (shareable) ShareType.Shareable else ShareType.Unshareable,
                             title = title.orEmpty(),
                             text = notes.orEmpty(),
                         )
@@ -157,10 +156,9 @@ fun AddNoteScreen(
                     onClick = {
                         focusManager.clearFocus(force = true)
 
-                        val note = Note(
+                        val note = Note.FileNote(
                             id = Random.nextInt(from = 0, until = Int.MAX_VALUE).toString(),
-                            type = if (shareable) NoteType.Shareable else NoteType.Unshareable,
-                            saveToDatabase = false,
+                            shareType = if (shareable) ShareType.Shareable else ShareType.Unshareable,
                             title = title.orEmpty(),
                             text = notes.orEmpty(),
                         )

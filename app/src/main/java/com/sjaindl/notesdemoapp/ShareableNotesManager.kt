@@ -3,9 +3,11 @@ package com.sjaindl.notesdemoapp
 import android.content.Context
 import android.content.Intent
 import androidx.core.content.ContextCompat
+import androidx.room.Room
 import com.sjaindl.notesdemoapp.db.AppDatabase
 import com.sjaindl.notesdemoapp.db.NoteEntity
 import com.sjaindl.notesdemoapp.model.Note
+import com.sjaindl.notesdemoapp.model.ShareType
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -13,8 +15,15 @@ import java.io.File
 
 class ShareableNotesManager(
     private val context: Context,
-    private val database: AppDatabase,
 ): NoteAction {
+
+    private val database by lazy {
+        Room.databaseBuilder(
+            context = context,
+            klass = AppDatabase::class.java,
+            name = "database-notes",
+        ).build()
+    }
 
     override fun share(note: Note) {
         val sendIntent: Intent = Intent().apply {
@@ -28,11 +37,14 @@ class ShareableNotesManager(
     }
 
     override suspend fun load(): List<Note> {
-        return readFromFiles() + readFromDatabase()
+        val notes = readFromFiles() + readFromDatabase()
+        return notes.filter {
+            it.shareType == ShareType.Shareable
+        }
     }
 
     override suspend fun save(note: Note) {
-        if (note.saveToDatabase) {
+        if (note is Note.DatabaseNote) {
             saveToDatabase(note = note)
         } else {
             saveToFile(note = note)
@@ -40,7 +52,7 @@ class ShareableNotesManager(
     }
 
     override suspend fun delete(note: Note) {
-        if (note.saveToDatabase) {
+        if (note is Note.DatabaseNote) {
             deleteFromDatabase(note = note)
         } else {
             deleteFromFile(noteId = note.id)
@@ -48,9 +60,11 @@ class ShareableNotesManager(
     }
 
     private fun saveToFile(note: Note) {
+        val fileNote = note as? Note.FileNote ?: return
+
         val dir = context.getDir("notes", Context.MODE_PRIVATE)
         val filename = "${note.id}.json"
-        val fileContent = Json.encodeToString(note)
+        val fileContent = Json.encodeToString(fileNote)
         val file = File(dir, filename)
 
         file.outputStream().use {
@@ -61,7 +75,7 @@ class ShareableNotesManager(
     private suspend fun saveToDatabase(note: Note) {
         val entity = NoteEntity(
             note.id,
-            note.type,
+            note.shareType,
             note.title,
             note.text,
         )
@@ -69,7 +83,7 @@ class ShareableNotesManager(
         database.notesDao().insertAll(entity)
     }
 
-    private fun readFromFiles(): List<Note> {
+    private fun readFromFiles(): List<Note.FileNote> {
         val files = context.getDir("notes", Context.MODE_PRIVATE).listFiles()
 
         return files?.map { file ->
@@ -93,7 +107,7 @@ class ShareableNotesManager(
     private suspend fun deleteFromDatabase(note: Note) {
         val entity = NoteEntity(
             id = note.id,
-            type = note.type,
+            type = note.shareType,
             title = note.title,
             text = note.text,
         )
@@ -103,10 +117,9 @@ class ShareableNotesManager(
 
     private suspend fun readFromDatabase(): List<Note> {
         return database.notesDao().getAll().map {
-            Note(
+            Note.DatabaseNote(
                 id = it.id,
-                type = it.type,
-                saveToDatabase = true,
+                shareType = it.type,
                 title = it.title,
                 text = it.text,
             )

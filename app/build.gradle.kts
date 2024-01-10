@@ -63,7 +63,7 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
     implementation("androidx.compose.material:material-icons-extended:1.5.4")
 
     implementation("androidx.room:room-runtime:2.6.1")
