@@ -8,7 +8,6 @@ import com.sjaindl.notesdemoapp.db.AppDatabase
 import com.sjaindl.notesdemoapp.db.NoteEntity
 import com.sjaindl.notesdemoapp.model.Note
 import com.sjaindl.notesdemoapp.model.ShareType
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
