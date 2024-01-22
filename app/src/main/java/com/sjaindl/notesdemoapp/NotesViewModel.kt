@@ -11,24 +11,25 @@ import kotlinx.coroutines.launch
 
 class NotesViewModel(
     private val notesManager: NotesManager,
+    private val notesPersistence: NotesPersistence,
 ): ViewModel() {
     private val _notes = MutableStateFlow<List<Note>>(emptyList())
     val notes = _notes.asStateFlow()
 
     fun loadNotes() = viewModelScope.launch {
-        _notes.value = notesManager.load()
+        _notes.value = notesPersistence.load()
     }
 
     fun addNote(note: Note) {
         viewModelScope.launch {
-            notesManager.save(note = note)
+            notesPersistence.save(note = note)
         }
         _notes.value += note
     }
 
     fun deleteNote(note: Note) {
         viewModelScope.launch {
-            notesManager.delete(note = note)
+            notesPersistence.delete(note = note)
         }
         _notes.value -= note
     }
@@ -46,6 +47,9 @@ class NotesViewModel(
                 notesManager = NotesManager(
                     context = context,
                 ),
+                notesPersistence = NotesPersistence(
+                    context = context,
+                )
             ) as T
         }
     }
