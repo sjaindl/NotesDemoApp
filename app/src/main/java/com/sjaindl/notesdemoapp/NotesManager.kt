@@ -1,6 +1,8 @@
 package com.sjaindl.notesdemoapp
 
 import android.content.Context
+import android.content.Intent
+import androidx.core.content.ContextCompat
 import androidx.room.Room
 import com.sjaindl.notesdemoapp.db.AppDatabase
 import com.sjaindl.notesdemoapp.db.NoteEntity
@@ -10,7 +12,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
 
-class UnshareableNotesManager(
+class NotesManager(
     private val context: Context,
 ): NoteAction {
 
@@ -23,13 +25,22 @@ class UnshareableNotesManager(
     }
 
     override fun share(note: Note) {
-        // Not supported
+        if (note.shareType == ShareType.Unshareable) return
+
+        val sendIntent: Intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, "${note.title}\n${note.text}")
+            type = "text/plain"
+        }
+
+        val shareIntent = Intent.createChooser(sendIntent, null)
+        ContextCompat.startActivity(context, shareIntent, null)
     }
 
     override suspend fun load(): List<Note> {
         val notes = readFromFiles() + readFromDatabase()
-        return notes.filter {
-            it.shareType == ShareType.Unshareable
+        return notes.sortedBy {
+            it.shareType
         }
     }
 
