@@ -74,20 +74,6 @@ class UnshareableNotesManager(
         database.notesDao().insertAll(entity)
     }
 
-    private fun readFromFiles(): List<Note.FileNote> {
-        val files = context.getDir("notes", Context.MODE_PRIVATE).listFiles()
-
-        return files?.map { file ->
-            val json = file.bufferedReader().useLines { lines ->
-                lines.fold("") { some, text ->
-                    "$some\n$text"
-                }
-            }
-
-            Json.decodeFromString(json)
-        } ?: emptyList()
-    }
-
     private fun deleteFromFile(noteId: String) {
         val dir = context.getDir("notes", Context.MODE_PRIVATE)
         val filename = "${noteId}.json"
@@ -104,6 +90,20 @@ class UnshareableNotesManager(
         )
 
         database.notesDao().delete(entity)
+    }
+
+    private fun readFromFiles(): List<Note.FileNote> {
+        val files = context.getDir("notes", Context.MODE_PRIVATE).listFiles()
+
+        return files?.map { file ->
+            val json = file.bufferedReader().useLines { lines ->
+                lines.fold("") { some, text ->
+                    "$some\n$text"
+                }
+            }
+
+            Json.decodeFromString(json)
+        } ?: emptyList()
     }
 
     private suspend fun readFromDatabase(): List<Note> {
