@@ -5,31 +5,41 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.sjaindl.notesdemoapp.model.Note
+import com.sjaindl.notesdemoapp.persistence.NotesDatabasePersistence
+import com.sjaindl.notesdemoapp.persistence.NotesFilePersistence
+import com.sjaindl.notesdemoapp.persistence.NotesPersistence
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class NotesViewModel(
     private val notesManager: NotesManager,
-    private val notesPersistence: NotesPersistence,
+    private val filePersistence: NotesPersistence,
+    private val databasePersistence: NotesPersistence,
 ): ViewModel() {
     private val _notes = MutableStateFlow<List<Note>>(emptyList())
     val notes = _notes.asStateFlow()
 
     fun loadNotes() = viewModelScope.launch {
-        _notes.value = notesPersistence.load()
+        _notes.value = filePersistence.load() + databasePersistence.load()
     }
 
     fun addNote(note: Note) {
         viewModelScope.launch {
-            notesPersistence.save(note = note)
+            when(note) {
+                is Note.FileNote -> filePersistence.save(note = note)
+                is Note.DatabaseNote -> databasePersistence.save(note = note)
+            }
         }
         _notes.value += note
     }
 
     fun deleteNote(note: Note) {
         viewModelScope.launch {
-            notesPersistence.delete(note = note)
+            when(note) {
+                is Note.FileNote -> filePersistence.delete(note = note)
+                is Note.DatabaseNote -> databasePersistence.delete(note = note)
+            }
         }
         _notes.value -= note
     }
@@ -47,9 +57,12 @@ class NotesViewModel(
                 notesManager = NotesManager(
                     context = context,
                 ),
-                notesPersistence = NotesPersistence(
+                filePersistence = NotesFilePersistence(
                     context = context,
-                )
+                ),
+                databasePersistence = NotesDatabasePersistence(
+                    context = context,
+                ),
             ) as T
         }
     }
