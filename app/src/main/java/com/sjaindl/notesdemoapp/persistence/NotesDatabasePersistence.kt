@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.sjaindl.notesdemoapp.db.AppDatabase
 import com.sjaindl.notesdemoapp.db.NoteEntity
 import com.sjaindl.notesdemoapp.model.Note
+import com.sjaindl.notesdemoapp.model.Note.DatabaseNote
 
 class NotesDatabasePersistence(
     private val context: Context,
@@ -26,18 +27,16 @@ class NotesDatabasePersistence(
     }
 
     override suspend fun save(note: Note) {
-        if (note is Note.DatabaseNote) {
-            saveNote(note = note)
-        }
+        require(note is DatabaseNote)
+        saveNote(note = note)
     }
 
     override suspend fun delete(note: Note) {
-        if (note is Note.DatabaseNote) {
-            deleteNote(note = note)
-        }
+        require(note is DatabaseNote)
+        deleteNote(note = note)
     }
 
-    private suspend fun saveNote(note: Note) {
+    private suspend fun saveNote(note: DatabaseNote) {
         val entity = NoteEntity(
             note.id,
             note.shareType,
@@ -48,7 +47,7 @@ class NotesDatabasePersistence(
         database.notesDao().insertAll(entity)
     }
 
-    private suspend fun deleteNote(note: Note) {
+    private suspend fun deleteNote(note: DatabaseNote) {
         val entity = NoteEntity(
             id = note.id,
             type = note.shareType,
@@ -61,7 +60,7 @@ class NotesDatabasePersistence(
 
     private suspend fun read(): List<Note> {
         return database.notesDao().getAll().map {
-            Note.DatabaseNote(
+            DatabaseNote(
                 id = it.id,
                 shareType = it.type,
                 title = it.title,

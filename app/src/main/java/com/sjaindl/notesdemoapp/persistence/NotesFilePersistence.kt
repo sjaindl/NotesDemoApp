@@ -2,6 +2,7 @@ package com.sjaindl.notesdemoapp.persistence
 
 import android.content.Context
 import com.sjaindl.notesdemoapp.model.Note
+import com.sjaindl.notesdemoapp.model.Note.FileNote
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
@@ -18,23 +19,19 @@ class NotesFilePersistence(
     }
 
     override suspend fun save(note: Note) {
-        if (note is Note.FileNote) {
-            saveNote(note = note)
-        }
+        require(note is FileNote)
+        saveNote(note = note)
     }
 
     override suspend fun delete(note: Note) {
-        if (note is Note.FileNote) {
-            delete(noteId = note.id)
-        }
+        require(note is FileNote)
+        delete(noteId = note.id)
     }
 
-    private fun saveNote(note: Note) {
-        val fileNote = note as? Note.FileNote ?: return
-
+    private fun saveNote(note: FileNote) {
         val dir = context.getDir("notes", Context.MODE_PRIVATE)
         val filename = "${note.id}.json"
-        val fileContent = Json.encodeToString(fileNote)
+        val fileContent = Json.encodeToString(note)
         val file = File(dir, filename)
 
         file.outputStream().use {
@@ -49,7 +46,7 @@ class NotesFilePersistence(
         file.delete()
     }
 
-    private fun read(): List<Note.FileNote> {
+    private fun read(): List<FileNote> {
         val files = context.getDir("notes", Context.MODE_PRIVATE).listFiles()
 
         return files?.map { file ->
