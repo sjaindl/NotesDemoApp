@@ -8,7 +8,7 @@ import com.sjaindl.notesdemoapp.model.ShareType
 
 class NotesManager(
     private val context: Context,
-): NoteAction {
+): NoteShareAction {
 
     override fun share(note: Note) {
         if (note.shareType == ShareType.Unshareable) return
@@ -21,18 +21,5 @@ class NotesManager(
 
         val shareIntent = Intent.createChooser(sendIntent, null)
         ContextCompat.startActivity(context, shareIntent, null)
-    }
-
-    override suspend fun load(): List<Note> {
-        // No op
-        return emptyList()
-    }
-
-    override suspend fun save(note: Note) {
-        // No op
-    }
-
-    override suspend fun delete(note: Note) {
-        // No op
     }
 }

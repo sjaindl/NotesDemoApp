@@ -1,17 +1,13 @@
 package com.sjaindl.notesdemoapp.persistence
 
-import com.sjaindl.notesdemoapp.NoteAction
+import com.sjaindl.notesdemoapp.NotePersistenceAction
 import com.sjaindl.notesdemoapp.model.Note
 
-interface NotesPersistence: NoteAction {
+interface NotesPersistence {
 
-    override fun share(note: Note) {
-        // No op
-    }
+    suspend fun load(): List<Note>
 
-    override suspend fun load(): List<Note>
+    suspend fun save(note: Note)
 
-    override suspend fun save(note: Note)
-
-    override suspend fun delete(note: Note)
+    suspend fun delete(note: Note)
 }
