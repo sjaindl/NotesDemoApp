@@ -1,23 +1,13 @@
 package com.sjaindl.notesdemoapp.persistence
 
-import android.content.Context
-import androidx.room.Room
 import com.sjaindl.notesdemoapp.db.AppDatabase
 import com.sjaindl.notesdemoapp.db.NoteEntity
 import com.sjaindl.notesdemoapp.model.Note
 import com.sjaindl.notesdemoapp.model.Note.DatabaseNote
 
 class NotesDatabasePersistence(
-    private val context: Context,
+    private val database: AppDatabase,
 ): NotesPersistence {
-
-    private val database by lazy {
-        Room.databaseBuilder(
-            context = context,
-            klass = AppDatabase::class.java,
-            name = "database-notes",
-        ).build()
-    }
 
     override suspend fun load(): List<Note> {
         val notes = read()

@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.room.Room
+import com.sjaindl.notesdemoapp.db.AppDatabase
 import com.sjaindl.notesdemoapp.model.Note
 import com.sjaindl.notesdemoapp.persistence.NotesDatabasePersistence
 import com.sjaindl.notesdemoapp.persistence.NotesFilePersistence
@@ -53,6 +55,14 @@ class NotesViewModel(
     ) :
         ViewModelProvider.NewInstanceFactory() {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            val database by lazy {
+                Room.databaseBuilder(
+                    context = context,
+                    klass = AppDatabase::class.java,
+                    name = "database-notes",
+                ).build()
+            }
+
             return NotesViewModel(
                 notesManager = NotesManager(
                     context = context,
@@ -61,7 +71,7 @@ class NotesViewModel(
                     context = context,
                 ),
                 databasePersistence = NotesDatabasePersistence(
-                    context = context,
+                    database = database,
                 ),
             ) as T
         }
