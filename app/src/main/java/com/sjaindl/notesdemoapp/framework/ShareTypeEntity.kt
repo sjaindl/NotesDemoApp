@@ -1,4 +1,4 @@
-package com.sjaindl.notesdemoapp.framework.data
+package com.sjaindl.notesdemoapp.framework
 
 enum class ShareTypeEntity {
     Shareable,

@@ -1,10 +1,10 @@
-package com.sjaindl.notesdemoapp.framework.data
+package com.sjaindl.notesdemoapp.framework.file
 
 import android.content.Context
 import com.sjaindl.core.data.NotesDataSource
 import com.sjaindl.core.domain.Note
 import com.sjaindl.core.domain.Note.FileNote
-import com.sjaindl.notesdemoapp.framework.data.file.FileNoteEntity
+import com.sjaindl.notesdemoapp.framework.NoteMapper
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File

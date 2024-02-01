@@ -11,8 +11,8 @@ import com.sjaindl.core.usecases.DeleteNoteUseCase
 import com.sjaindl.core.usecases.LoadNotesUseCase
 import com.sjaindl.core.usecases.SaveNoteUseCase
 import com.sjaindl.core.usecases.ShareNoteUseCase
-import com.sjaindl.notesdemoapp.framework.data.NotesDatabaseDataSource
-import com.sjaindl.notesdemoapp.framework.data.NotesFileDataSource
+import com.sjaindl.notesdemoapp.framework.db.NotesDatabaseDataSource
+import com.sjaindl.notesdemoapp.framework.file.NotesFileDataSource
 import com.sjaindl.notesdemoapp.framework.db.AppDatabase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

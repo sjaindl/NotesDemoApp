@@ -1,8 +1,8 @@
-package com.sjaindl.notesdemoapp.framework.data
+package com.sjaindl.notesdemoapp.framework
 
 import com.sjaindl.core.domain.Note
 import com.sjaindl.core.domain.ShareType
-import com.sjaindl.notesdemoapp.framework.data.file.FileNoteEntity
+import com.sjaindl.notesdemoapp.framework.file.FileNoteEntity
 import com.sjaindl.notesdemoapp.framework.db.DatabaseNoteEntity
 
 object NoteMapper {

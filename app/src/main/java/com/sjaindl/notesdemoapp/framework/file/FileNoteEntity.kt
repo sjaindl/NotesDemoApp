@@ -1,6 +1,6 @@
-package com.sjaindl.notesdemoapp.framework.data.file
+package com.sjaindl.notesdemoapp.framework.file
 
-import com.sjaindl.notesdemoapp.framework.data.ShareTypeEntity
+import com.sjaindl.notesdemoapp.framework.ShareTypeEntity
 import kotlinx.serialization.Serializable
 
 @Serializable

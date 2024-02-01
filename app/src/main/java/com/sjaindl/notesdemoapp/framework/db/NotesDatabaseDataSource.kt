@@ -1,9 +1,9 @@
-package com.sjaindl.notesdemoapp.framework.data
+package com.sjaindl.notesdemoapp.framework.db
 
 import com.sjaindl.core.data.NotesDataSource
 import com.sjaindl.core.domain.Note
 import com.sjaindl.core.domain.Note.DatabaseNote
-import com.sjaindl.notesdemoapp.framework.db.AppDatabase
+import com.sjaindl.notesdemoapp.framework.NoteMapper
 
 class NotesDatabaseDataSource(
     private val database: AppDatabase,
