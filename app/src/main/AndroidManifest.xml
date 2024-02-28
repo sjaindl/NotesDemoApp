@@ -13,7 +13,7 @@
         android:theme="@style/Theme.NotesDemoApp"
         tools:targetApi="31">
         <activity
-            android:name=".presentation.MainActivity"
+            android:name=".ui.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.NotesDemoApp">
             <intent-filter>

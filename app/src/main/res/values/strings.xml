@@ -8,4 +8,6 @@
     <string name="addNotes">Add notes</string>
     <string name="cancel">Cancel</string>
     <string name="shareable">Shareable?</string>
+    <string name="couldNotRetrieveData">Could not retrieve data</string>
+    <string name="sync">Sync</string>
 </resources>
