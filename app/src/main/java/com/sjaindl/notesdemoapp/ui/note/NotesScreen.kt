@@ -32,14 +32,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.HasDefaultViewModelProviderFactory
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.LifecycleStartEffect
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sjaindl.notesdemoapp.R
 import com.sjaindl.notesdemoapp.data.external.Note
 import com.sjaindl.notesdemoapp.data.external.ShareType
+import com.sjaindl.notesdemoapp.ui.MainActivity
 import com.sjaindl.notesdemoapp.ui.NotesAppBar
 import com.sjaindl.notesdemoapp.ui.common.LoadingAnimation
 import com.sjaindl.notesdemoapp.ui.theme.NotesDemoAppTheme
@@ -48,10 +49,13 @@ import com.sjaindl.notesdemoapp.ui.theme.NotesDemoAppTheme
 internal fun NotesScreen(
     modifier: Modifier = Modifier,
     viewModel: NotesViewModel = viewModel(
-        factory = NotesViewModel.NotesViewModelFactory(LocalContext.current)
-    )
+        viewModelStoreOwner = (LocalContext.current as MainActivity),
+        key = null,
+        factory = NotesViewModel.NotesViewModelFactory(),
+        extras = (LocalContext.current as HasDefaultViewModelProviderFactory).defaultViewModelCreationExtras,
+    ),
 ) {
-    val notesUIState by viewModel.notesUIState.collectAsStateWithLifecycle()
+    val notesUIState by viewModel.notesUIState.collectAsState()
 
     val lifecycleOwner = LocalLifecycleOwner.current
     val stateFlow = lifecycleOwner.lifecycle.currentStateFlow

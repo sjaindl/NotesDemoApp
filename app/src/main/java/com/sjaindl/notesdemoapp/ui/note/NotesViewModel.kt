@@ -1,9 +1,13 @@
 package com.sjaindl.notesdemoapp.ui.note
 
 import android.content.Context
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.VIEW_MODEL_STORE_OWNER_KEY
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.room.Room
 import com.sjaindl.notesdemoapp.data.NotesRepository
 import com.sjaindl.notesdemoapp.data.db.AppDatabase
@@ -37,18 +41,27 @@ internal class NotesViewModel(
     private val saveNoteUseCase: SaveNoteUseCase,
     private val deleteNoteUseCase: DeleteNoteUseCase,
     private val syncNotesUseCase: SyncNotesUseCase,
+    private val savedStateHandle: SavedStateHandle,
 ): ViewModel() {
     private val _notesUIState = MutableStateFlow<NotesUIState>(NotesUIState.Loading)
     val notesUIState = _notesUIState.asStateFlow()
 
     fun loadNotes() = viewModelScope.launch {
-        val notes = loadNotesUseCase.invoke()
-            .catch {
-                _notesUIState.value = NotesUIState.Error(it)
-            }
+        val flow = savedStateHandle.getStateFlow("notes") {
+            emptyList<Note>()
+        }
 
-        notes.collectLatest {
-            _notesUIState.value = NotesUIState.Content(notes = it)
+        if(flow.value().isNotEmpty()) {
+            _notesUIState.value = NotesUIState.Content(notes = flow.value())
+        } else {
+            loadNotesUseCase.invoke()
+                .catch {
+                    _notesUIState.value = NotesUIState.Error(it)
+                }
+                .collectLatest { notes ->
+                    savedStateHandle["notes"] = notes
+                    _notesUIState.value = NotesUIState.Content(notes = notes)
+                }
         }
     }
 
@@ -73,11 +86,12 @@ internal class NotesViewModel(
         shareNoteUseCase.share(note = note)
     }
 
-    class NotesViewModelFactory(
-        private val context: Context,
-    ) :
+    class NotesViewModelFactory() :
         ViewModelProvider.NewInstanceFactory() {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+
+        override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
+            val context = extras[VIEW_MODEL_STORE_OWNER_KEY] as Context
+
             val database by lazy {
                 Room.databaseBuilder(
                     context = context,
@@ -119,7 +133,8 @@ internal class NotesViewModel(
                 ),
                 syncNotesUseCase = SyncNotesUseCase(
                     notesRepository = notesRepository,
-                )
+                ),
+                savedStateHandle = extras.createSavedStateHandle()
             ) as T
         }
     }
