@@ -33,6 +33,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
+import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sjaindl.notesdemoapp.R
@@ -59,6 +61,18 @@ internal fun NotesScreen(
 
     if (currentLifecycleState.isAtLeast(Lifecycle.State.STARTED)) {
         viewModel.loadNotes()
+    }
+
+    LifecycleEventEffect(Lifecycle.Event.ON_START, lifecycleOwner) {
+        Log.d("Lifecycle_Demo", "LifecycleEventEffect ON_START")
+    }
+
+    LifecycleStartEffect {
+        Log.d("Lifecycle_Demo", "LifecycleStartEffect")
+
+        onStopOrDispose {
+            Log.d("Lifecycle_Demo", "LifecycleStartEffect onStopOrDispose")
+        }
     }
 
     NotesScreenContent(
