@@ -36,6 +36,7 @@ import androidx.lifecycle.HasDefaultViewModelProviderFactory
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.LifecycleStartEffect
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sjaindl.notesdemoapp.R
 import com.sjaindl.notesdemoapp.data.external.Note
@@ -55,11 +56,25 @@ internal fun NotesScreen(
         extras = (LocalContext.current as HasDefaultViewModelProviderFactory).defaultViewModelCreationExtras,
     ),
 ) {
-    val notesUIState by viewModel.notesUIState.collectAsState()
-
     val lifecycleOwner = LocalLifecycleOwner.current
     val stateFlow = lifecycleOwner.lifecycle.currentStateFlow
     val currentLifecycleState by stateFlow.collectAsState()
+
+    val notesUIState by viewModel.notesUIState.collectAsStateWithLifecycle(
+        lifecycleOwner = lifecycleOwner,
+        minActiveState = Lifecycle.State.STARTED,
+    )
+
+    // collectAsStateWithLifecycle is shorthand for:
+    /*
+    produceState<NotesUIState>(initialValue = NotesUIState.Loading, key1 = lifecycleOwner.lifecycle, key2 = viewModel) {
+        lifecycleOwner.lifecycle.repeatOnLifecycle(state = Lifecycle.State.STARTED) {
+            viewModel.notesUIState.collect {
+                val notesUIState = it
+            }
+        }
+    }
+     */
 
     Log.d("Lifecycle_Demo", "current state: $currentLifecycleState")
 

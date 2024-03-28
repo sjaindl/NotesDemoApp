@@ -22,9 +22,10 @@ import com.sjaindl.notesdemoapp.domain.SaveNoteUseCase
 import com.sjaindl.notesdemoapp.domain.ShareNoteUseCase
 import com.sjaindl.notesdemoapp.domain.SyncNotesUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 internal sealed class NotesUIState {
@@ -44,7 +45,12 @@ internal class NotesViewModel(
     private val savedStateHandle: SavedStateHandle,
 ): ViewModel() {
     private val _notesUIState = MutableStateFlow<NotesUIState>(NotesUIState.Loading)
-    val notesUIState = _notesUIState.asStateFlow()
+
+    val notesUIState = _notesUIState.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5_000),
+        initialValue = NotesUIState.Loading,
+    )
 
     fun loadNotes() = viewModelScope.launch {
         val flow = savedStateHandle.getStateFlow("notes") {
@@ -86,8 +92,7 @@ internal class NotesViewModel(
         shareNoteUseCase.share(note = note)
     }
 
-    class NotesViewModelFactory() :
-        ViewModelProvider.NewInstanceFactory() {
+    class NotesViewModelFactory() : ViewModelProvider.NewInstanceFactory() {
 
         override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
             val context = extras[VIEW_MODEL_STORE_OWNER_KEY] as Context
