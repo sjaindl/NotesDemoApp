@@ -9,6 +9,7 @@ import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.room.Room
+import androidx.work.WorkManager
 import com.sjaindl.notesdemoapp.data.NotesRepository
 import com.sjaindl.notesdemoapp.data.db.AppDatabase
 import com.sjaindl.notesdemoapp.data.db.NotesDatabaseDataSourceImpl
@@ -122,6 +123,9 @@ internal class NotesViewModel(
                 notesRemoteDataSource = notesRemoteDataSource,
             )
 
+            val workManager = WorkManager
+                .getInstance(context)
+
             return NotesViewModel(
                 shareNoteUseCase = ShareNoteUseCase(
                     context = context,
@@ -137,6 +141,7 @@ internal class NotesViewModel(
                 ),
                 syncNotesUseCase = SyncNotesUseCase(
                     notesRepository = notesRepository,
+                    workManager = workManager,
                 ),
                 savedStateHandle = extras.createSavedStateHandle()
             ) as T

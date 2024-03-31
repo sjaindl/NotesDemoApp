@@ -10,7 +10,7 @@ internal class NotesRemoteApi: NotesRemoteDataSource {
 
     // Simulating network request, returning mocked data
     override suspend fun read(): Flow<List<Note>> {
-        delay(timeMillis = 5000)
+        delay(timeMillis = 500)
 
         val notes = listOf(
             Note.DatabaseNote(

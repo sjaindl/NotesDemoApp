@@ -54,7 +54,7 @@ class NotesRepository(
         notesRemoteDataSource.save(note = note)
     }
 
-    suspend fun sync() = withContext(dispatcher) {
+    suspend fun syncFromRemote() = withContext(dispatcher) {
         val remoteNotes = notesRemoteDataSource.read().firstOrNull() ?: emptyList()
         val localNotes = localNotes().firstOrNull() ?: emptyList()
 
