@@ -1,4 +1,4 @@
-package com.sjaindl.notesdemoapp
+package com.sjaindl.notesdemoapp.model.sharing
 
 import android.content.Context
 import android.content.Intent
