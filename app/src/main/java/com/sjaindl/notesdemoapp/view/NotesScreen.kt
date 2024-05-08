@@ -1,4 +1,4 @@
-package com.sjaindl.notesdemoapp
+package com.sjaindl.notesdemoapp.view
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,39 +13,38 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.sjaindl.notesdemoapp.ui.theme.NotesDemoAppTheme
+import com.sjaindl.notesdemoapp.model.Note
+import com.sjaindl.notesdemoapp.model.ShareType
+import com.sjaindl.notesdemoapp.view.theme.NotesDemoAppTheme
 
 @Composable
 fun NotesScreen(
+    notes: List<Note>,
     modifier: Modifier = Modifier,
-    viewModel: NotesViewModel = viewModel(
-        factory = NotesViewModel.NotesViewModelFactory(LocalContext.current)
-    )
+    onLoadNotes: () -> Unit,
+    onAddNote: (Note) -> Unit,
+    onDeleteNote: (Note) -> Unit,
+    onShareNote: (Note) -> Unit,
 ) {
     var addNote by remember {
         mutableStateOf(false)
     }
 
     LaunchedEffect(key1 = Unit) {
-        viewModel.loadNotes()
+        onLoadNotes()
     }
-
-    val notes = viewModel.notes.collectAsState()
 
     if (addNote) {
         AddNoteScreen(
             modifier = modifier,
             onAddNote = {
-                viewModel.addNote(note = it)
+                onAddNote(it)
             },
             navigateUp = {
                 addNote = false
@@ -73,14 +72,14 @@ fun NotesScreen(
             LazyColumn(
                 modifier = Modifier.padding(padding),
             ) {
-                items(notes.value) { note ->
+                items(notes) { note ->
                     SingleNote(
                         note = note,
                         onDelete = {
-                           viewModel.deleteNote(note = note)
+                            onDeleteNote(note)
                         },
                         onShare = {
-                            viewModel.share(note = note)
+                            onShareNote(note)
                         },
                     )
                 }
@@ -94,6 +93,25 @@ fun NotesScreen(
 @Composable
 fun NotesScreenPreview() {
     NotesDemoAppTheme {
-        NotesScreen()
+        NotesScreen(
+            notes = listOf(
+                Note.FileNote(
+                    id = "id",
+                    shareType = ShareType.Shareable,
+                    title = "file note title",
+                    text = "text",
+                ),
+                Note.DatabaseNote(
+                    id = "id",
+                    shareType = ShareType.Unshareable,
+                    title = "database note title",
+                    text = "text",
+                ),
+            ),
+            onLoadNotes = {},
+            onAddNote = {},
+            onDeleteNote = {},
+            onShareNote = {},
+        )
     }
 }

@@ -1,4 +1,4 @@
-package com.sjaindl.notesdemoapp.persistence
+package com.sjaindl.notesdemoapp.model.persistence
 
 import android.content.Context
 import com.sjaindl.notesdemoapp.model.Note

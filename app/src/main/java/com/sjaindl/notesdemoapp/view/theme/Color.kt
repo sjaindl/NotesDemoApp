@@ -1,4 +1,4 @@
-package com.sjaindl.notesdemoapp.ui.theme
+package com.sjaindl.notesdemoapp.view.theme
 
 import androidx.compose.ui.graphics.Color
 

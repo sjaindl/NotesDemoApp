@@ -1,7 +1,7 @@
-package com.sjaindl.notesdemoapp.persistence
+package com.sjaindl.notesdemoapp.model.persistence
 
-import com.sjaindl.notesdemoapp.db.AppDatabase
-import com.sjaindl.notesdemoapp.db.NoteEntity
+import com.sjaindl.notesdemoapp.model.db.AppDatabase
+import com.sjaindl.notesdemoapp.model.db.NoteEntity
 import com.sjaindl.notesdemoapp.model.Note
 import com.sjaindl.notesdemoapp.model.Note.DatabaseNote
 
