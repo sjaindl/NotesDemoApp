@@ -6,11 +6,9 @@ import androidx.core.content.ContextCompat
 import com.sjaindl.notesdemoapp.model.Note
 import com.sjaindl.notesdemoapp.model.ShareType
 
-class NotesManager(
-    private val context: Context,
-): NoteShareAction {
+class NotesManager: NoteShareAction {
 
-    override fun share(note: Note) {
+    override fun share(context: Context, note: Note) {
         if (note.shareType == ShareType.Unshareable) return
 
         val sendIntent: Intent = Intent().apply {
