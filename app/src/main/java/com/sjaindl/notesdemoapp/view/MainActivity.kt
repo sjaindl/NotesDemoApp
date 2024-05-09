@@ -15,8 +15,6 @@ import com.sjaindl.notesdemoapp.view.theme.NotesDemoAppTheme
 
 class MainActivity : ComponentActivity(), NotesContract.NotesView {
 
-    private var notes: List<Note> = emptyList()
-
     private val presenter: NotesContract.NotesPresenter by lazy {
         NotesPresenter(
             appContainer = (application as NotesDemoApplication).appContainer,
@@ -26,7 +24,7 @@ class MainActivity : ComponentActivity(), NotesContract.NotesView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContent()
+        setContent(notes = emptyList())
     }
 
     override fun onStart() {
@@ -41,7 +39,7 @@ class MainActivity : ComponentActivity(), NotesContract.NotesView {
         presenter.detach()
     }
 
-    private fun setContent() {
+    private fun setContent(notes: List<Note>) {
         setContent {
             NotesDemoAppTheme {
                 Surface(
@@ -77,17 +75,6 @@ class MainActivity : ComponentActivity(), NotesContract.NotesView {
     }
 
     override fun displayNotes(notes: List<Note>) {
-        this.notes = notes
-        setContent()
-    }
-
-    override fun displayNewNote(note: Note) {
-        notes += note
-        setContent()
-    }
-
-    override fun hideNote(note: Note) {
-        notes -= note
-        setContent()
+        setContent(notes = notes)
     }
 }

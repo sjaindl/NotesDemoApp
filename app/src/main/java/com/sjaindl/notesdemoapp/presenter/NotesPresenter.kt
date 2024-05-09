@@ -22,6 +22,8 @@ class NotesPresenter(
 
     private lateinit var view: NotesContract.NotesView
 
+    private var notes: List<Note> = emptyList()
+
     override fun attach(view: NotesContract.NotesView) {
         this.view = view
     }
@@ -32,7 +34,7 @@ class NotesPresenter(
 
     override fun loadNotes() {
         scope.launch {
-            val notes = mutableListOf<Note>().apply {
+            notes = mutableListOf<Note>().apply {
                 addAll(filePersistence.load())
                 addAll(databasePersistence.load())
             }
@@ -50,8 +52,10 @@ class NotesPresenter(
                 is Note.DatabaseNote -> databasePersistence.save(note = note)
             }
 
+            notes += note
+
             withContext(Dispatchers.Main) {
-                view.displayNewNote(note = note)
+                view.displayNotes(notes = notes)
             }
         }
     }
@@ -63,8 +67,10 @@ class NotesPresenter(
                 is Note.DatabaseNote -> databasePersistence.delete(note = note)
             }
 
+            notes -= note
+
             withContext(Dispatchers.Main) {
-                view.hideNote(note = note)
+                view.displayNotes(notes = notes)
             }
         }
     }
