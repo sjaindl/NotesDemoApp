@@ -1,15 +1,16 @@
-package com.sjaindl.notesdemoapp
+package com.sjaindl.notesdemoapp.viewmodel
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.room.Room
-import com.sjaindl.notesdemoapp.db.AppDatabase
+import com.sjaindl.notesdemoapp.model.sharing.NotesManager
+import com.sjaindl.notesdemoapp.model.db.AppDatabase
 import com.sjaindl.notesdemoapp.model.Note
-import com.sjaindl.notesdemoapp.persistence.NotesDatabasePersistence
-import com.sjaindl.notesdemoapp.persistence.NotesFilePersistence
-import com.sjaindl.notesdemoapp.persistence.NotesPersistence
+import com.sjaindl.notesdemoapp.model.persistence.NotesDatabasePersistence
+import com.sjaindl.notesdemoapp.model.persistence.NotesFilePersistence
+import com.sjaindl.notesdemoapp.model.persistence.NotesPersistence
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch

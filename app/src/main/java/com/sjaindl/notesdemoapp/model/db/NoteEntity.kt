@@ -1,4 +1,4 @@
-package com.sjaindl.notesdemoapp.db
+package com.sjaindl.notesdemoapp.model.db
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

@@ -1,4 +1,4 @@
-package com.sjaindl.notesdemoapp
+package com.sjaindl.notesdemoapp.view
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import com.sjaindl.notesdemoapp.ui.theme.NotesDemoAppTheme
+import com.sjaindl.notesdemoapp.view.theme.NotesDemoAppTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

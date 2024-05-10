@@ -1,4 +1,4 @@
-package com.sjaindl.notesdemoapp
+package com.sjaindl.notesdemoapp.model.sharing
 
 import com.sjaindl.notesdemoapp.model.Note
 

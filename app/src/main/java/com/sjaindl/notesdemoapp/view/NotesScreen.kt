@@ -1,4 +1,4 @@
-package com.sjaindl.notesdemoapp
+package com.sjaindl.notesdemoapp.view
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -22,7 +22,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.sjaindl.notesdemoapp.ui.theme.NotesDemoAppTheme
+import com.sjaindl.notesdemoapp.viewmodel.NotesViewModel
+import com.sjaindl.notesdemoapp.view.theme.NotesDemoAppTheme
 
 @Composable
 fun NotesScreen(
@@ -35,11 +36,11 @@ fun NotesScreen(
         mutableStateOf(false)
     }
 
+
+    val notes = viewModel.notes.collectAsState()
     LaunchedEffect(key1 = Unit) {
         viewModel.loadNotes()
     }
-
-    val notes = viewModel.notes.collectAsState()
 
     if (addNote) {
         AddNoteScreen(

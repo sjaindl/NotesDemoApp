@@ -1,4 +1,4 @@
-package com.sjaindl.notesdemoapp
+package com.sjaindl.notesdemoapp.view
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -28,6 +28,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.sjaindl.notesdemoapp.R
 import com.sjaindl.notesdemoapp.model.Note
 import com.sjaindl.notesdemoapp.model.ShareType
 import kotlin.random.Random

@@ -1,4 +1,4 @@
-package com.sjaindl.notesdemoapp
+package com.sjaindl.notesdemoapp.view
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -13,7 +13,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.sjaindl.notesdemoapp.ui.theme.NotesDemoAppTheme
+import com.sjaindl.notesdemoapp.R
+import com.sjaindl.notesdemoapp.view.theme.NotesDemoAppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
