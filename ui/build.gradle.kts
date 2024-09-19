@@ -1,26 +1,20 @@
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
     id("com.google.devtools.ksp")
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.hilt)
 }
 
 android {
-    namespace = "com.sjaindl.notesdemoapp"
+    namespace = "com.sjaindl.notesdemoapp.ui"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.sjaindl.notesdemoapp"
         minSdk = 29
-        targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
+        consumerProguardFiles("consumer-rules.pro")
     }
 
     buildTypes {
@@ -45,12 +39,6 @@ android {
     buildFeatures {
         compose = true
     }
-
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
 }
 
 dependencies {
@@ -70,14 +58,11 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.compose)
 
     implementation(libs.androidx.material.icons.extended)
-    implementation(libs.androidx.work.runtime.ktx)
 
     implementation(libs.hilt.base)
     ksp(libs.hilt.compiler)
 
-    implementation(project(":ui"))
     implementation(project(":domain"))
-    implementation(project(":data"))
 
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
@@ -86,5 +71,4 @@ dependencies {
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(composeBom)
 }
