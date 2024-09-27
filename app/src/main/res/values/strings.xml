@@ -1,3 +1,5 @@
 <resources>
     <string name="appName">NotesDemoApp</string>
+
+    <string name="couldNotRetrieveData">Could not retrieve data</string>
 </resources>
