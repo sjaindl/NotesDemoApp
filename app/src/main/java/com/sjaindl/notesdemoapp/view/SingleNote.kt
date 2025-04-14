@@ -1,4 +1,4 @@
-package com.sjaindl.notesdemoapp
+package com.sjaindl.notesdemoapp.view
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sjaindl.notesdemoapp.model.Note
 import com.sjaindl.notesdemoapp.model.ShareType
-import com.sjaindl.notesdemoapp.ui.theme.NotesDemoAppTheme
+import com.sjaindl.notesdemoapp.view.theme.NotesDemoAppTheme
 
 @Composable
 fun SingleNote(
