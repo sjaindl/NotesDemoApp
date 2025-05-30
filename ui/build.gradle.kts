@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "com.sjaindl.notesdemoapp.ui"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         minSdk = 29
