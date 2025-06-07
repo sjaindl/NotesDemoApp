@@ -5,4 +5,7 @@ import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
 class NotesDemoApplication: Application() {
+    companion object {
+       var isLoggedIn = false
+    }
 }

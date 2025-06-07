@@ -2,6 +2,7 @@ package com.sjaindl.notesdemoapp.ui
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Login
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -22,8 +23,10 @@ fun NotesAppBar(
     title: String,
     canNavigateBack: Boolean = true,
     showSyncAction: Boolean = false,
+    showLogin: Boolean = false,
     navigateUp: () -> Unit = {},
     onSync: () -> Unit = {},
+    onLogin: () -> Unit = {},
 ) {
     NotesDemoAppTheme {
         TopAppBar(
@@ -42,6 +45,14 @@ fun NotesAppBar(
                 }
             },
             actions = {
+                if (showLogin) {
+                    IconButton(onClick = { onLogin() }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.Login,
+                            contentDescription = stringResource(id = R.string.sync),
+                        )
+                    }
+                }
                 if (showSyncAction) {
                     IconButton(onClick = { onSync() }) {
                         Icon(
@@ -52,7 +63,9 @@ fun NotesAppBar(
                 }
             },
             colors = topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primary,
+                containerColor = MaterialTheme.colorScheme.primary.copy(
+                    alpha = 0.4f
+                ),
             )
         )
     }

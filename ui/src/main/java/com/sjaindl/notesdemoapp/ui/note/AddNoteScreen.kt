@@ -106,7 +106,7 @@ fun AddNoteScreen(
                 },
                 placeholder = {
                     Text(text = stringResource(id = R.string.addNotes))
-                }
+                },
             )
 
             Row(

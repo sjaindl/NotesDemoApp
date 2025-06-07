@@ -42,20 +42,41 @@ import com.sjaindl.notesdemoapp.domain.model.ShareType
 import com.sjaindl.notesdemoapp.ui.NotesAppBar
 import com.sjaindl.notesdemoapp.ui.R
 import com.sjaindl.notesdemoapp.ui.common.LoadingAnimation
+import com.sjaindl.notesdemoapp.ui.login.LoginScreen
+import com.sjaindl.notesdemoapp.ui.login.SignUpScreen
+import com.sjaindl.notesdemoapp.ui.login.SignupOrLoginChooser
 import com.sjaindl.notesdemoapp.ui.theme.NotesDemoAppTheme
+
+sealed class AuthState {
+    data object SignedOut: AuthState()
+
+    data object SignInOrUp: AuthState()
+
+    data object SigningIn: AuthState()
+
+    data object SigningUp: AuthState()
+
+    data object SignedIn: AuthState()
+}
 
 @Composable
 fun NotesScreen(
+    isLoggedIn: Boolean,
+    onLoggedIn: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     NotesScreenContent(
+        isLoggedIn = isLoggedIn,
+        onLoggedIn = onLoggedIn,
         modifier = modifier,
     )
 }
 
 @Composable
 internal fun NotesScreenContent(
+    isLoggedIn: Boolean,
     modifier: Modifier = Modifier,
+    onLoggedIn: () -> Unit,
     viewModel: NotesViewModel = viewModel(),
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -99,6 +120,7 @@ internal fun NotesScreenContent(
 
     NotesScreenContent(
         notesUIState = notesUIState,
+        isLoggedIn = isLoggedIn,
         modifier = modifier,
         onAddNote = {
             viewModel.addNote(note = it)
@@ -112,18 +134,25 @@ internal fun NotesScreenContent(
         onSync = {
             viewModel.sync()
         },
+        onLoggedIn = onLoggedIn,
     )
 }
 
 @Composable
 internal fun NotesScreenContent(
     notesUIState: NotesUIState,
+    isLoggedIn: Boolean,
     modifier: Modifier = Modifier,
     onAddNote: (Note) -> Unit,
     onDeleteNote: (Note) -> Unit,
     onShareNote: (Note) -> Unit,
     onSync: () -> Unit,
+    onLoggedIn: () -> Unit,
 ) {
+    var authState: AuthState by remember {
+        mutableStateOf(if (isLoggedIn) AuthState.SignedIn else AuthState.SignedOut)
+    }
+
     var addNote by remember {
         mutableStateOf(false)
     }
@@ -139,94 +168,138 @@ internal fun NotesScreenContent(
             }
         )
     } else {
-        Scaffold(
-            topBar = {
-                NotesAppBar(
-                    canNavigateBack = false,
-                    showSyncAction = true,
-                    title = stringResource(R.string.appName),
-                    onSync = onSync,
-                )
-            },
-        ) { paddingValues ->
-
-            when (notesUIState) {
-                is NotesUIState.Loading -> {
-                    Column(
-                        modifier = Modifier
-                            .padding(paddingValues)
-                            .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.background)
-                            .padding(all = 16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center,
-                    ) {
-                        LoadingAnimation()
-                    }
-                }
-
-                is NotesUIState.Error -> {
-                    val exception = notesUIState.error
-
-                    val errorMessage = exception.localizedMessage
-                        ?: exception.message
-                        ?: stringResource(id = R.string.couldNotRetrieveData)
-
-                    Column(
-                        modifier = Modifier
-                            .padding(paddingValues)
-                            .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.background)
-                            .padding(all = 16.dp),
-                        verticalArrangement = Arrangement.Center,
-                    ) {
-                        Text(
-                            text = errorMessage,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.align(Alignment.CenterHorizontally),
-                            fontSize = 20.sp,
+        when (authState) {
+            AuthState.SignedIn, AuthState.SignedOut -> {
+                Scaffold(
+                    topBar = {
+                        NotesAppBar(
+                            canNavigateBack = false,
+                            showSyncAction = authState == AuthState.SignedIn,
+                            showLogin = authState == AuthState.SignedOut,
+                            title = stringResource(R.string.appName),
+                            onSync = onSync,
+                            onLogin = {
+                                authState = AuthState.SignInOrUp
+                            }
                         )
-                    }
-                }
+                    },
+                ) { paddingValues ->
 
-                is NotesUIState.Content -> {
-                    Scaffold(
-                        modifier = Modifier
-                            .padding(paddingValues),
-                        floatingActionButton = {
-                            IconButton(
-                                onClick = {
-                                    addNote = true
-                                },
-                                colors = IconButtonDefaults.iconButtonColors(
-                                    containerColor = MaterialTheme.colorScheme.inversePrimary,
-                                )
+                    when (notesUIState) {
+                        is NotesUIState.Loading -> {
+                            Column(
+                                modifier = Modifier
+                                    .padding(paddingValues)
+                                    .fillMaxSize()
+                                    .background(MaterialTheme.colorScheme.background)
+                                    .padding(all = 16.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center,
                             ) {
-                                Icon(
-                                    imageVector = Icons.Default.Add,
-                                    contentDescription = null,
+                                LoadingAnimation()
+                            }
+                        }
+
+                        is NotesUIState.Error -> {
+                            val exception = notesUIState.error
+
+                            val errorMessage = exception.localizedMessage
+                                ?: exception.message
+                                ?: stringResource(id = R.string.couldNotRetrieveData)
+
+                            Column(
+                                modifier = Modifier
+                                    .padding(paddingValues)
+                                    .fillMaxSize()
+                                    .background(MaterialTheme.colorScheme.background)
+                                    .padding(all = 16.dp),
+                                verticalArrangement = Arrangement.Center,
+                            ) {
+                                Text(
+                                    text = errorMessage,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                                    fontSize = 20.sp,
                                 )
                             }
-                        },
-                        floatingActionButtonPosition = FabPosition.Center,
-                    ) { padding ->
-                        LazyColumn(
-                            modifier = Modifier.padding(padding),
-                        ) {
-                            items(notesUIState.notes) { note ->
-                                SingleNote(
-                                    note = note,
-                                    onDelete = {
-                                        onDeleteNote(note)
-                                    },
-                                    onShare = {
-                                        onShareNote(note)
-                                    },
-                                )
+                        }
+
+                        is NotesUIState.Content -> {
+                            Scaffold(
+                                modifier = Modifier
+                                    .padding(paddingValues),
+                                floatingActionButton = {
+                                    IconButton(
+                                        onClick = {
+                                            addNote = true
+                                        },
+                                        colors = IconButtonDefaults.iconButtonColors(
+                                            containerColor = MaterialTheme.colorScheme.inversePrimary,
+                                        )
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Add,
+                                            contentDescription = null,
+                                        )
+                                    }
+                                },
+                                floatingActionButtonPosition = FabPosition.Center,
+                            ) { padding ->
+                                LazyColumn(
+                                    modifier = Modifier
+                                        .padding(padding),
+                                ) {
+                                    items(notesUIState.notes) { note ->
+                                        SingleNote(
+                                            note = note,
+                                            onDelete = {
+                                                onDeleteNote(note)
+                                            },
+                                            onShare = {
+                                                onShareNote(note)
+                                            },
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
                 }
+            }
+
+            AuthState.SignInOrUp -> {
+                SignupOrLoginChooser(
+                    onLogin = {
+                        authState = AuthState.SigningIn
+                    },
+                    onSignUp = {
+                        authState = AuthState.SigningUp
+                    },
+                )
+            }
+
+            AuthState.SigningIn -> {
+                LoginScreen(
+                    onLoginClicked = { username, password ->
+                        onLoggedIn()
+                        authState = AuthState.SignedIn
+                    },
+                    onCancel = {
+                        authState = AuthState.SignedOut
+                    }
+                )
+            }
+
+            AuthState.SigningUp -> {
+                SignUpScreen(
+                    onSignUpClicked = { username, password ->
+                        onLoggedIn()
+                        authState = AuthState.SignedIn
+                    },
+                    onCancel = {
+                        authState = AuthState.SignedOut
+                    }
+                )
             }
         }
     }
@@ -253,10 +326,12 @@ fun NotesScreenContentPreview() {
                     text = "Test file note text",
                 ),
             )),
+            isLoggedIn = true,
             onAddNote = { },
             onDeleteNote = { },
             onShareNote = { },
             onSync = { },
+            onLoggedIn = { },
         )
     }
 }
@@ -267,10 +342,12 @@ fun NotesScreenContentErrorPreview() {
     NotesDemoAppTheme {
         NotesScreenContent(
             notesUIState = NotesUIState.Error(Throwable("Notes Error!")),
+            isLoggedIn = true,
             onAddNote = { },
             onDeleteNote = { },
             onShareNote = { },
             onSync = { },
+            onLoggedIn = { },
         )
     }
 }
@@ -282,10 +359,12 @@ fun NotesScreenContentLoadingPreview() {
     NotesDemoAppTheme {
         NotesScreenContent(
             notesUIState = NotesUIState.Loading,
+            isLoggedIn = true,
             onAddNote = { },
             onDeleteNote = { },
             onShareNote = { },
             onSync = { },
+            onLoggedIn = { },
         )
     }
 }

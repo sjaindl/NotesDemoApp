@@ -28,6 +28,13 @@ internal class NotesRemoteApi  @Inject constructor(): NotesRemoteDataSource {
                 title = "File Note",
                 text = "Test file note text",
             ),
+            Note.FileNote(
+                id = 4,
+                creationTime = "2025-01-02T12:00:00",
+                shareType = ShareType.Unshareable,
+                title = "Very long File Note",
+                text = "This is a very looooooooooooooooong test note text. This is the second line of the very looooooooooooooooong test note text. Lorem ipsum dolor. Lorem ipsum dolor. Lorem ipsum dolor. Lorem ipsum dolor. Lorem ipsum dolor. Lorem ipsum dolor. Lorem ipsum dolor. Lorem ipsum dolor. Lorem ipsum dolor. Lorem ipsum dolor. Lorem ipsum dolor.",
+            ),
         )
 
         return flowOf(value = notes)
