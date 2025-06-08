@@ -21,6 +21,7 @@ import com.sjaindl.notesdemoapp.ui.theme.NotesDemoAppTheme
 @Composable
 fun NotesAppBar(
     title: String,
+    modifier: Modifier = Modifier,
     canNavigateBack: Boolean = true,
     showSyncAction: Boolean = false,
     showLogin: Boolean = false,
@@ -33,7 +34,7 @@ fun NotesAppBar(
             title = {
                 Text(title)
             },
-            modifier = Modifier,
+            modifier = modifier,
             navigationIcon = {
                 if (canNavigateBack) {
                     IconButton(onClick = { navigateUp() }) {
