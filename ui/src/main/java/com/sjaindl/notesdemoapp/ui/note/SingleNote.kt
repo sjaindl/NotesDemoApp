@@ -1,5 +1,6 @@
 package com.sjaindl.notesdemoapp.ui.note
 
+import android.content.ClipData
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.animateBounds
 import androidx.compose.foundation.clickable
@@ -34,21 +35,31 @@ import androidx.compose.ui.layout.LookaheadScope
 import androidx.compose.ui.layout.onFirstVisible
 import androidx.compose.ui.layout.onLayoutRectChanged
 import androidx.compose.ui.layout.onVisibilityChanged
+import androidx.compose.ui.platform.LocalClipboard
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.isTraversalGroup
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sjaindl.notesdemoapp.domain.model.Note
 import com.sjaindl.notesdemoapp.domain.model.ShareType
+import com.sjaindl.notesdemoapp.ui.common.NoteIndex
 import com.sjaindl.notesdemoapp.ui.theme.NotesDemoAppTheme
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun SingleNote(
     note: Note,
+    index: Int,
     modifier: Modifier = Modifier,
     onDelete: () -> Unit,
     onShare: () -> Unit,
 ) {
+    val clipboard = LocalClipboard.current
+
     var bgColor by remember {
         mutableStateOf(Color.White)
     }
@@ -63,6 +74,13 @@ fun SingleNote(
             .padding(
                 horizontal = 8.dp,
                 vertical = 8.dp,
+            )
+            .clickable(
+                onClickLabel = "Copy note to clipboard",
+                onClick = {
+                    val clipData = ClipData.newPlainText("Copied ${note.title}", note.text)
+                    clipboard.nativeClipboard.setPrimaryClip(clipData)
+                }
             )
             .onFirstVisible(
                 minDurationMs = 1000, // should be at least 1 second visible
@@ -79,6 +97,9 @@ fun SingleNote(
             }
             .onVisibilityChanged { visible ->
                 bgColor = if (visible) Color.LightGray else Color.DarkGray
+            }
+            .semantics {
+                isTraversalGroup = true
             },
         colors = CardDefaults.cardColors(
             containerColor = bgColor
@@ -86,7 +107,7 @@ fun SingleNote(
     ) {
 
         Box(
-            contentAlignment = Alignment.BottomEnd
+            contentAlignment = Alignment.BottomEnd,
         ) {
             Column(
                 modifier = Modifier
@@ -98,25 +119,46 @@ fun SingleNote(
                 Text(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(32.dp),
+                        .height(32.dp)
+                        .semantics {
+                            traversalIndex = 2f
+                            heading()
+                        },
                     text = note.title,
                 )
 
                 HorizontalDivider()
+
                 LookaheadScope {
-                    Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = if (expanded) 16.dp else 0.dp)
-                            .offset(x = if (expanded) 0.dp else 20.dp)
-                            .clickable {
-                                expanded = !expanded
-                            }
-                            .animateBounds(this@LookaheadScope),
-                        text = note.text,
-                        maxLines = if (expanded) 6 else 2,
-                        autoSize = TextAutoSize.StepBased(minFontSize = 10.sp, maxFontSize = 16.sp, stepSize = 2.sp),
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        NoteIndex(
+                            number = index,
+                            modifier = Modifier
+                                .semantics {
+                                    traversalIndex = 1f
+                                    contentDescription = "Note number ${index + 1}"
+                                },
+                        )
+
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = if (expanded) 24.dp else 8.dp)
+                                .offset(x = if (expanded) 8.dp else 24.dp)
+                                .clickable {
+                                    expanded = !expanded
+                                }
+                                .animateBounds(this@LookaheadScope)
+                                .semantics {
+                                    traversalIndex = 3f
+                                },
+                            text = note.text,
+                            maxLines = if (expanded) 6 else 2,
+                            autoSize = TextAutoSize.StepBased(minFontSize = 10.sp, maxFontSize = 16.sp, stepSize = 2.sp),
+                        )
+                    }
                 }
 
                 HorizontalDivider(
@@ -134,12 +176,20 @@ fun SingleNote(
             if (note is Note.DatabaseNote) {
                 Text(
                     text = "Saved to database",
+                    modifier = Modifier
+                        .semantics {
+                            traversalIndex = 4f
+                        },
                     color = Color.Gray,
                     fontSize = 10.sp,
                 )
             } else {
                 Text(
                     text = "Saved to file system",
+                    modifier = Modifier
+                        .semantics {
+                            traversalIndex = 4f
+                        },
                     color = Color.Gray,
                     fontSize = 10.sp,
                 )
@@ -147,6 +197,10 @@ fun SingleNote(
 
             if (note.shareType == ShareType.Shareable) {
                 IconButton(
+                    modifier = Modifier
+                        .semantics {
+                            traversalIndex = 5f
+                        },
                     onClick = onShare,
                 ) {
                     Icon(
@@ -157,6 +211,10 @@ fun SingleNote(
             }
 
             IconButton(
+                modifier = Modifier
+                    .semantics {
+                        traversalIndex = 6f
+                    },
                 onClick = onDelete,
             ) {
                 Icon(
@@ -173,6 +231,7 @@ fun SingleNote(
 fun SingleNotePreview() {
     NotesDemoAppTheme {
         SingleNote(
+            index = 1,
             note = Note.DatabaseNote(
                 id = 1,
                 creationTime = "2024-01-01T12:00:00",

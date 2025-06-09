@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FabPosition
@@ -16,17 +16,31 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.CollectionInfo
+import androidx.compose.ui.semantics.CustomAccessibilityAction
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.ProgressBarRangeInfo
+import androidx.compose.ui.semantics.collectionInfo
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.customActions
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.progressBarRangeInfo
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -46,6 +60,7 @@ import com.sjaindl.notesdemoapp.ui.login.LoginScreen
 import com.sjaindl.notesdemoapp.ui.login.SignUpScreen
 import com.sjaindl.notesdemoapp.ui.login.SignupOrLoginChooser
 import com.sjaindl.notesdemoapp.ui.theme.NotesDemoAppTheme
+import kotlinx.coroutines.launch
 
 sealed class AuthState {
     data object SignedOut: AuthState()
@@ -157,11 +172,21 @@ internal fun NotesScreenContent(
         mutableStateOf(false)
     }
 
+    val snackBarHostState = remember {
+        SnackbarHostState()
+    }
+
+    val scope = rememberCoroutineScope()
+
     if (addNote) {
         AddNoteScreen(
             modifier = modifier,
             onAddNote = {
                 onAddNote(it)
+
+                scope.launch {
+                    snackBarHostState.showSnackbar("Note added")
+                }
             },
             navigateUp = {
                 addNote = false
@@ -183,6 +208,21 @@ internal fun NotesScreenContent(
                             }
                         )
                     },
+                    snackbarHost = {
+                        SnackbarHost(
+                            hostState = snackBarHostState,
+                            snackbar = { snackBarData ->
+                                Snackbar(
+                                    modifier = Modifier.semantics {
+                                        contentDescription = snackBarData.visuals.message
+                                        liveRegion = LiveRegionMode.Polite
+                                    }
+                                ) {
+                                    Text(snackBarData.visuals.message)
+                                }
+                            }
+                        )
+                    }
                 ) { paddingValues ->
 
                     when (notesUIState) {
@@ -192,7 +232,10 @@ internal fun NotesScreenContent(
                                     .padding(paddingValues)
                                     .fillMaxSize()
                                     .background(MaterialTheme.colorScheme.background)
-                                    .padding(horizontal = 16.dp),
+                                    .padding(horizontal = 16.dp)
+                                    .semantics {
+                                        progressBarRangeInfo = ProgressBarRangeInfo.Indeterminate
+                                    },
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 verticalArrangement = Arrangement.Center,
                             ) {
@@ -212,7 +255,10 @@ internal fun NotesScreenContent(
                                     .padding(paddingValues)
                                     .fillMaxSize()
                                     .background(MaterialTheme.colorScheme.background)
-                                    .padding(all = 16.dp),
+                                    .padding(all = 16.dp)
+                                    .semantics {
+                                        error(message = errorMessage)
+                                    },
                                 verticalArrangement = Arrangement.Center,
                             ) {
                                 Text(
@@ -247,17 +293,39 @@ internal fun NotesScreenContent(
                             ) { padding ->
                                 LazyColumn(
                                     modifier = Modifier
-                                        .padding(padding),
+                                        .padding(padding)
+                                        .semantics {
+                                            collectionInfo = CollectionInfo(
+                                                rowCount = notesUIState.notes.size,
+                                                columnCount = 1,
+                                            )
+                                        },
                                 ) {
-                                    items(notesUIState.notes) { note ->
-                                        SingleNote(
+                                    itemsIndexed(
+                                        items = notesUIState.notes,
+                                        key = { index, note ->
+                                            note.id!!
+                                        },
+                                    ) { index, note ->
+
+                                        SwipeableSingleNoteItem(
                                             note = note,
-                                            onDelete = {
+                                            index = index,
+                                            modifier = Modifier.semantics {
+                                                customActions = listOf(
+                                                    CustomAccessibilityAction(
+                                                        label = "Swipe to dismiss",
+                                                        action = {
+                                                            onDeleteNote
+                                                            true
+                                                        },
+                                                    )
+                                                )
+                                            },
+                                            onDeleteNote = {
                                                 onDeleteNote(note)
                                             },
-                                            onShare = {
-                                                onShareNote(note)
-                                            },
+                                            onShareNote = onShareNote,
                                         )
                                     }
                                 }

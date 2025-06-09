@@ -12,9 +12,11 @@ kotlinxSerializationJson = "1.8.1"
 lifecycleRuntimeKtx = "2.9.1"
 materialIconsExtended = "1.7.8"
 material3 = "1.4.0-alpha15"
+navigation = "2.7.5"
 roomCompiler = "2.7.1"
 roomKtx = "2.7.1"
 roomRuntime = "2.7.1"
+truth = "1.1.5"
 workRuntimeKtx = "2.10.1"
 
 [libraries]
@@ -38,10 +40,14 @@ androidx-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
 androidx-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 androidx-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
+compose_navigation-testing = { group = "androidx.navigation", name = "navigation-testing", version.ref = "navigation" }
+compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+compose-ui-test-accessibility = { group = "androidx.compose.ui", name = "ui-test-junit4-accessibility" }
 hilt_base = { group = "com.google.dagger", name = "hilt-android", version.ref = "hiltVersion" }
 hilt_compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hiltVersion" }
 junit = { module = "junit:junit", version.ref = "junit" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+truth = { group = "com.google.truth", name = "truth", version.ref = "truth" }
 
 [plugins]
 android-library = { id = "com.android.library", version.ref = "agp" }
@@ -50,3 +56,4 @@ hilt = { id = "com.google.dagger.hilt.android", version.ref = "hiltVersion" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 
 [bundles]
+composeAndroidTest = ["compose-ui-test-junit4", "compose_navigation-testing", "compose-ui-test-accessibility"]
