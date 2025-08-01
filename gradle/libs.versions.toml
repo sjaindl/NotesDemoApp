@@ -1,9 +1,11 @@
 [versions]
 activityCompose = "1.10.1"
-agp = "8.10.1"
+agp = "8.11.1"
 composeBom = "2025.06.00"
 coreKtx = "1.16.0"
 espressoCore = "3.6.1"
+genAi = "1.0.0-beta1"
+generativeai = "0.9.0"
 hiltVersion = "2.56.2"
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -43,6 +45,9 @@ androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version
 compose_navigation-testing = { group = "androidx.navigation", name = "navigation-testing", version.ref = "navigation" }
 compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 compose-ui-test-accessibility = { group = "androidx.compose.ui", name = "ui-test-junit4-accessibility" }
+genai-proofreading = { module = "com.google.mlkit:genai-proofreading", version.ref = "genAi" }
+genai-summarization = { module = "com.google.mlkit:genai-summarization", version.ref = "genAi" }
+generativeai = { module = "com.google.ai.client.generativeai:generativeai", version.ref = "generativeai" }
 hilt_base = { group = "com.google.dagger", name = "hilt-android", version.ref = "hiltVersion" }
 hilt_compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hiltVersion" }
 junit = { module = "junit:junit", version.ref = "junit" }

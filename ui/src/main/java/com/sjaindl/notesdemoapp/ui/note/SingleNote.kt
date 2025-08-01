@@ -17,6 +17,7 @@ import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.Summarize
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -57,6 +58,8 @@ fun SingleNote(
     modifier: Modifier = Modifier,
     onDelete: () -> Unit,
     onShare: () -> Unit,
+    onSummarize: () -> Unit,
+    onProofread: () -> Unit,
 ) {
     val clipboard = LocalClipboard.current
 
@@ -96,7 +99,7 @@ fun SingleNote(
                 }
             }
             .onVisibilityChanged { visible ->
-                bgColor = if (visible) Color.LightGray else Color.DarkGray
+                //bgColor = if (visible) Color.LightGray else Color.DarkGray
             }
             .semantics {
                 isTraversalGroup = true
@@ -155,7 +158,7 @@ fun SingleNote(
                                     traversalIndex = 3f
                                 },
                             text = note.text,
-                            maxLines = if (expanded) 6 else 2,
+                            maxLines = if (expanded) 60 else 2,
                             autoSize = TextAutoSize.StepBased(minFontSize = 10.sp, maxFontSize = 16.sp, stepSize = 2.sp),
                         )
                     }
@@ -222,6 +225,36 @@ fun SingleNote(
                     contentDescription = null,
                 )
             }
+
+            IconButton(
+                modifier = Modifier
+                    .semantics {
+                        traversalIndex = 7f
+                    },
+                onClick = onSummarize,
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Summarize,
+                    contentDescription = "Summarize note",
+                )
+            }
+
+            /*
+            TODO: Proofreading
+            IconButton(
+                modifier = Modifier
+                    .semantics {
+                        traversalIndex = 8f
+                    },
+                onClick = onProofread,
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Check,
+                    contentDescription = "Proofread note",
+                )
+            }
+
+             */
         }
     }
 }
@@ -241,6 +274,8 @@ fun SingleNotePreview() {
             ),
             onDelete = { },
             onShare = { },
+            onSummarize = { },
+            onProofread = { },
         )
     }
 }

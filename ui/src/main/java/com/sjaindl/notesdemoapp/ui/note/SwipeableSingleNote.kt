@@ -39,6 +39,8 @@ fun SwipeableSingleNoteItem(
     modifier: Modifier = Modifier,
     onDeleteNote: () -> Unit,
     onShareNote: (Note) -> Unit,
+    onSummarize: (Note) -> Unit,
+    onProofread: (Note) -> Unit,
 ) {
     var showItem by remember {
         mutableStateOf(true)
@@ -115,7 +117,15 @@ fun SwipeableSingleNoteItem(
                         showItem = false
                     }
                 },
-                onShare = { onShareNote(note) },
+                onShare = {
+                    onShareNote(note)
+                },
+                onSummarize = {
+                    onSummarize(note)
+                },
+                onProofread = {
+                    onProofread(note)
+                },
             )
         }
     }

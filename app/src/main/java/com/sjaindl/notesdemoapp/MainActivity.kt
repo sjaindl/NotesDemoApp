@@ -22,12 +22,7 @@ class MainActivity : ComponentActivity() {
                         .fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    NotesScreen(
-                        isLoggedIn = NotesDemoApplication.isLoggedIn,
-                        onLoggedIn = {
-                            NotesDemoApplication.isLoggedIn = true
-                        }
-                    )
+                    NotesScreen()
                 }
             }
         }

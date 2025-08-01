@@ -6,14 +6,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sjaindl.notesdemoapp.domain.DeleteNoteUseCase
 import com.sjaindl.notesdemoapp.domain.LoadNotesUseCase
+import com.sjaindl.notesdemoapp.domain.ProofreadNoteUseCase
 import com.sjaindl.notesdemoapp.domain.SaveNoteUseCase
 import com.sjaindl.notesdemoapp.domain.ShareNoteUseCase
+import com.sjaindl.notesdemoapp.domain.SummarizeNoteUseCase
 import com.sjaindl.notesdemoapp.domain.SyncNotesUseCase
 import com.sjaindl.notesdemoapp.domain.model.Note
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.stateIn
@@ -35,6 +38,8 @@ internal class NotesViewModel @Inject constructor(
     private val saveNoteUseCase: SaveNoteUseCase,
     private val deleteNoteUseCase: DeleteNoteUseCase,
     private val syncNotesUseCase: SyncNotesUseCase,
+    private val summarizeNoteUseCase: SummarizeNoteUseCase,
+    private val proofreadNoteUseCase: ProofreadNoteUseCase,
     private val savedStateHandle: SavedStateHandle,
 ): ViewModel() {
     private val _notesUIState = MutableStateFlow<NotesUIState>(NotesUIState.Loading)
@@ -44,6 +49,9 @@ internal class NotesViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5_000),
         initialValue = NotesUIState.Loading,
     )
+
+    private val _summary = MutableStateFlow<String?>(null)
+    val summary = _summary.asStateFlow()
 
     fun loadNotes() = viewModelScope.launch {
         val notesFlow: StateFlow<List<Note>> = savedStateHandle.getStateFlow(key = "notes", emptyList())
@@ -81,5 +89,19 @@ internal class NotesViewModel @Inject constructor(
 
     fun share(note: Note, context: Context) {
         shareNoteUseCase.share(note = note, context = context)
+    }
+
+    fun summarize(note: Note, context: Context) = viewModelScope.launch {
+        _notesUIState.value = NotesUIState.Loading
+        try {
+            _summary.value = summarizeNoteUseCase.summarize(noteText = note.text, context = context)
+            loadNotes()
+        } catch (exception: Exception) {
+            _notesUIState.value = NotesUIState.Error(exception)
+        }
+    }
+
+    fun resetSummary() {
+        _summary.value = null
     }
 }

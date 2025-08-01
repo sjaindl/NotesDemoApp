@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
@@ -14,6 +16,9 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+
+        val apiKey = getLocalProperty("gemini_api_key", project)
+        buildConfigField("String", "GEMINI_API_KEY", "\"$apiKey\"")
     }
 
     buildTypes {
@@ -25,18 +30,28 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
         jvmTarget = "1.8"
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 }
 
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.work.runtime.ktx)
+
+    implementation(libs.genai.proofreading)
+    implementation(libs.genai.summarization)
+    implementation(libs.generativeai)
 
     implementation(libs.hilt.base)
     ksp(libs.hilt.compiler)
@@ -45,4 +60,13 @@ dependencies {
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+}
+
+fun getLocalProperty(key: String, project: Project): String {
+    val properties = Properties()
+    val localPropertiesFile = project.rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        properties.load(localPropertiesFile.inputStream())
+    }
+    return properties.getProperty(key) ?: ""
 }
