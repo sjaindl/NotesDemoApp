@@ -1,13 +1,13 @@
 [versions]
 activityCompose = "1.10.1"
-agp = "8.10.1"
-composeBom = "2025.05.01"
+agp = "9.0.1"
+composeBom = "2025.06.00"
 coreKtx = "1.16.0"
 espressoCore = "3.6.1"
-hiltVersion = "2.56.2"
+hiltVersion = "2.59.2"
 junit = "4.13.2"
 junitVersion = "1.2.1"
-kotlin = "2.1.20"
+kotlin = "2.3.21"
 kotlinxSerializationJson = "1.8.1"
 lifecycleRuntimeKtx = "2.9.0"
 materialIconsExtended = "1.7.8"
@@ -46,6 +46,5 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 android-library = { id = "com.android.library", version.ref = "agp" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hiltVersion" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 
 [bundles]
