@@ -1,6 +1,5 @@
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
     kotlin("plugin.serialization")
     id("com.google.devtools.ksp")
     alias(libs.plugins.compose.compiler)
@@ -9,7 +8,7 @@ plugins {
 
 android {
     namespace = "com.sjaindl.notesdemoapp.core"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         minSdk = 29
@@ -31,10 +30,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
-    }
-
-    kotlinOptions {
-        jvmTarget = "1.8"
     }
 
     ksp {
@@ -61,7 +56,6 @@ dependencies {
     implementation(libs.androidx.material.icons.extended)
 
     implementation(libs.androidx.room.runtime)
-    annotationProcessor(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
 

@@ -1,13 +1,12 @@
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
     id("com.google.devtools.ksp")
     alias(libs.plugins.hilt)
 }
 
 android {
     namespace = "com.sjaindl.notesdemoapp.sync"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         minSdk = 29
@@ -29,14 +28,10 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
 }
 
 dependencies {
     implementation(libs.androidx.room.runtime)
-    annotationProcessor(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
 
