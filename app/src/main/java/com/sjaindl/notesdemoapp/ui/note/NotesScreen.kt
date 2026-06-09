@@ -86,7 +86,7 @@ internal fun NotesScreen(
         Log.d("Lifecycle_Demo", "LifecycleEventEffect ON_START")
     }
 
-    LifecycleStartEffect {
+    LifecycleStartEffect(Unit) {
         Log.d("Lifecycle_Demo", "LifecycleStartEffect")
 
         onStopOrDispose {
